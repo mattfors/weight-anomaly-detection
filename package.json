@@ -23,7 +23,6 @@
     "@mathigon/fermat": "^1.1.16",
     "@types/w3c-web-hid": "^1.0.6",
     "rxjs": "~7.8.0",
-    "statistics.js": "^1.0.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
