@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { WeightSample } from '../scale/weight-sampling.service';
+import { WeightSample } from './weight-sampling.service';
 import {
   MatCell,
   MatCellDef,
@@ -9,7 +9,8 @@ import {
   MatRowDef,
   MatTable
 } from '@angular/material/table';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
+import { MatChip, MatChipOption } from '@angular/material/chips';
 
 @Component({
   selector: 'app-weight-sample-table',
@@ -25,7 +26,10 @@ import { DatePipe } from '@angular/common';
     MatCell,
     MatHeaderRow,
     MatRow,
-    DatePipe
+    DatePipe,
+    MatChipOption,
+    NgIf,
+    MatChip
   ],
   templateUrl: './weight-sample-table.component.html',
   styleUrl: './weight-sample-table.component.scss'
@@ -35,20 +39,15 @@ export class WeightSampleTableComponent {
   @Input()
   samples: WeightSample[] = [];
 
-  @Input()
-  lowerThreshold: number | undefined;
+  displayedColumns: string[] = [
+    'time',
+    'weightInPounds',
+    'count',
+    'deltaCount',
+    'deltaPounds',
+    'meanWeight',
+    'zScore',
+    'anomalyDescription'
+  ];
 
-  @Input()
-  upperThreshold: number | undefined;
-
-  displayedColumns: string[] = ['time', 'weightInPounds', 'count', 'deltaCount', 'deltaPounds', 'meanWeight', 'warn'];
-
-  warning(v: number): string | void {
-    if (this.upperThreshold && v > this.upperThreshold) {
-      return 'over'
-    }
-    if (this.lowerThreshold && v < this.lowerThreshold) {
-      return 'under'
-    }
-  }
 }

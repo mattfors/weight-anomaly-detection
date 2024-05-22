@@ -1,1 +1,68 @@
-<app-scale></app-scale>
+<mat-grid-list cols="4" rowHeight="49vh" gutterSize="8">
+
+  <mat-grid-tile>
+    <mat-card style="height: 100%; width: 100%;">
+      <mat-card-header>
+        <mat-card-title>Scale</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list role="list">
+          <mat-list-item role="listitem">
+            <span *ngIf="changing$ | async">💬</span>
+            {{weight$|async}} Lbs.
+            <mat-chip *ngIf="zeroed$|async">ZERO</mat-chip>
+          </mat-list-item>
+          <mat-list-item role="listitem">Count: {{count$ | async}}</mat-list-item>
+          <mat-list-item role="listitem">Total: {{totalCount$ | async}}</mat-list-item>
+        </mat-list>
+
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="open()">Open</button>
+        <button mat-button (click)="close()">Close</button>
+        <button mat-button (click)="increment()">Increment Count</button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="2" rowspan="2">
+    <mat-card style="height: 100%; width: 100%;">
+      <mat-card-content>
+        <app-weight-sample-table [samples]="(scaleSamples$ | async) || []"></app-weight-sample-table>
+      </mat-card-content>
+    </mat-card>
+
+  </mat-grid-tile>
+
+  <mat-grid-tile rowspan="2">
+    <mat-card style="height: 100%; width: 100%;">
+      <mat-card-header>
+        <mat-card-title>Statistics</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list role="list" *ngIf="(sampleStats$ | async) as data">
+          <mat-list-item *ngFor="let item of Object.entries(data)" role="listitem">{{item[0]}}: {{item[1]}}</mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+
+  <mat-grid-tile>
+    <mat-card style="height: 100%; width: 100%;">
+      <mat-card-header>
+        <mat-card-title>Mock Scale</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field>
+          <input matInput type="text" [(ngModel)]="inputValue">
+        </mat-form-field>
+
+
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="triggerWeight(inputValue)">Trigger Weight</button>
+        <button mat-button (click)="triggerWeight('0')">Zero</button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>

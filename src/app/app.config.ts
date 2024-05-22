@@ -20,7 +20,8 @@ export const appConfig: ApplicationConfig = {
         byteOffset: 3,
         littleEndian: true,
         decimal: 10,
-        conversionMultiplier: 0.0625
+        conversionMultiplier: 0.0625,
+        precision: 4
       }
     }, provideAnimationsAsync()
   ]

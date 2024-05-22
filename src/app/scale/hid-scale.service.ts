@@ -8,7 +8,8 @@ export interface HidScaleConfig {
   byteOffset: number,
   littleEndian: boolean,
   decimal: number,
-  conversionMultiplier: number
+  conversionMultiplier: number,
+  precision: number
 }
 
 export const HID_SCALE_CONFIG = new InjectionToken<HidScaleConfig>('HidScaleConfig');
@@ -20,9 +21,11 @@ export class HidScaleService implements HardwareScaleInterface{
   private subscription!: Subscription;
   private data: BehaviorSubject<DataView | null> = new BehaviorSubject<DataView | null>(null);
   readonly weightInPounds: Observable<number>;
+  readonly precision: number;
 
   constructor(@Inject(HID_SCALE_CONFIG) public config: HidScaleConfig) {
     this.weightInPounds = this.data.pipe(map(dv => this.getWeightFromDataView(dv)));
+    this.precision = config.precision;
   }
 
 

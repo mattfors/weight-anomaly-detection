@@ -7,7 +7,7 @@ import { HARDWARE_SCALE, HardwareScaleInterface } from './hardware-scale-interfa
 })
 export class ScaleService {
 
-  readonly DUE_TIME = 500;
+  readonly DUE_TIME = 1000;
 
   private weightInPounds: BehaviorSubject<number> = new BehaviorSubject(0);
   private weightInPoundsSub!: Subscription;
@@ -19,12 +19,15 @@ export class ScaleService {
   readonly changing$: Observable<boolean> = this.detectingChange.asObservable();
   readonly zeroed$: Observable<boolean> = this.zeroedSubject.asObservable();
   readonly zeroedEvent$: Observable<void> = this.zeroedEventSubject.asObservable();
+  readonly precision: number;
 
-  constructor(@Inject(HARDWARE_SCALE) private scale: HardwareScaleInterface) {}
+  constructor(@Inject(HARDWARE_SCALE) private scale: HardwareScaleInterface) {
+    this.precision = scale.precision;
+  }
 
-  private handleValueChange(v: number): void {
+  handleValueChange(v: number): void {
     this.detectingChange.next(false);
-    this.weightInPounds.next(v);
+    this.weightInPounds.next(parseFloat(v.toFixed(this.precision)));
     if(v===0 && !this.zeroedSubject.value) {
       this.zeroedEventSubject.next();
       this.zeroedSubject.next(true);
