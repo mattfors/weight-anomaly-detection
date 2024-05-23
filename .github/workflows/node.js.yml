@@ -34,6 +34,5 @@ jobs:
     - name: Deploy to gh pages
       run: npm run ng deploy --base-href=/weight-anomaly-detection/ --name="${{ secrets.UNAME }}" --email=${{ secrets.EMAIL }}
       env:
-        CI: true
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
