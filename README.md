@@ -1,6 +1,6 @@
 # Weight Anomaly Detection
 
-This project serves as a proof of concept for utilizing weight samples obtained from a USB to detect anomalies, such as deviations from expected part quantities.
+This project serves as a proof of concept for utilizing weight samples obtained from a USB scale to detect anomalies, such as deviations from expected part quantities.
 
 ![demo](/images/bobbins.gif)
 

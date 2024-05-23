@@ -12,12 +12,18 @@
             {{weight$|async}} Lbs.
             <mat-chip *ngIf="zeroed$|async">ZERO</mat-chip>
           </mat-list-item>
-          <mat-list-item role="listitem">Count: {{count$ | async}}</mat-list-item>
+          <mat-list-item role="listitem">
+            Count: {{count$ | async}}
+            <mat-slide-toggle (change)="lockCount($event)"></mat-slide-toggle>
+          </mat-list-item>
           <mat-list-item role="listitem">Total: {{totalCount$ | async}}</mat-list-item>
+          <mat-list-item role="listitem">Theoretical Scale Count: {{theoreticalScaleCount$ | async}}</mat-list-item>
+
         </mat-list>
 
       </mat-card-content>
       <mat-card-actions>
+        <button mat-button (click)="clear()">Clear Samples</button>
         <button mat-button (click)="open()">Open</button>
         <button mat-button (click)="close()">Close</button>
         <button mat-button (click)="increment()">Increment Count</button>
@@ -62,6 +68,7 @@
       <mat-card-actions>
         <button mat-button (click)="triggerWeight(inputValue)">Trigger Weight</button>
         <button mat-button (click)="triggerWeight('0')">Zero</button>
+        <button mat-button (click)="triggerWeight(inputValue);triggerWeight('0')">Trigger + Zero</button>
       </mat-card-actions>
     </mat-card>
   </mat-grid-tile>

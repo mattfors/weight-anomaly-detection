@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { HID_SCALE_CONFIG, HidScaleService } from './scale/hid-scale.service';
-import { HARDWARE_SCALE } from './scale/hardware-scale-interface';
+import { HID_SCALE_CONFIG } from './scale/hid-scale.service';
+
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -18,10 +18,6 @@ describe('AppComponent', () => {
             conversionMultiplier: 0.0625,
             precision: 4
           }
-        },
-        {
-          provide: HARDWARE_SCALE,
-          useClass: HidScaleService
         }
       ]
     }).compileComponents();

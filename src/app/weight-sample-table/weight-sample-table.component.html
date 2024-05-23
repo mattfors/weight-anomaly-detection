@@ -1,50 +1,51 @@
-<table mat-table [dataSource]="samples" >
+<div class="table-container">
+  <table mat-table [dataSource]="samples" >
 
-  <ng-container matColumnDef="time">
-    <th mat-header-cell *matHeaderCellDef> Time</th>
-    <td mat-cell *matCellDef="let element"> {{element.time | date:'mediumTime'}} </td>
-  </ng-container>
+    <ng-container matColumnDef="time">
+      <th mat-header-cell *matHeaderCellDef> Time</th>
+      <td mat-cell *matCellDef="let element"> {{element.time | date:'mediumTime'}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="weightInPounds">
-    <th mat-header-cell *matHeaderCellDef> Weight </th>
-    <td mat-cell *matCellDef="let element"> {{element.weightInPounds}} </td>
-  </ng-container>
+    <ng-container matColumnDef="weightInPounds">
+      <th mat-header-cell *matHeaderCellDef> Weight </th>
+      <td mat-cell *matCellDef="let element"> {{element.weightInPounds}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="count">
-    <th mat-header-cell *matHeaderCellDef> Count </th>
-    <td mat-cell *matCellDef="let element"> {{element.count}} </td>
-  </ng-container>
+    <ng-container matColumnDef="count">
+      <th mat-header-cell *matHeaderCellDef> Count </th>
+      <td mat-cell *matCellDef="let element"> {{element.count}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="deltaCount">
-    <th mat-header-cell *matHeaderCellDef> &#916; Count </th>
-    <td mat-cell *matCellDef="let element"> {{element.deltaCount}} </td>
-  </ng-container>
+    <ng-container matColumnDef="deltaCount">
+      <th mat-header-cell *matHeaderCellDef> &#916; Count </th>
+      <td mat-cell *matCellDef="let element"> {{element.deltaCount}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="deltaPounds">
-    <th mat-header-cell *matHeaderCellDef> &#916; Weight </th>
-    <td mat-cell *matCellDef="let element"> {{element.deltaPounds}} </td>
-  </ng-container>
+    <ng-container matColumnDef="deltaPounds">
+      <th mat-header-cell *matHeaderCellDef> &#916; Weight </th>
+      <td mat-cell *matCellDef="let element"> {{element.deltaPounds}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="meanWeight">
-    <th mat-header-cell *matHeaderCellDef> Weight </th>
-    <td mat-cell *matCellDef="let element"> {{element.meanWeight}} </td>
-  </ng-container>
-
-
-  <ng-container matColumnDef="zScore">
-    <th mat-header-cell *matHeaderCellDef> zScore </th>
-    <td mat-cell *matCellDef="let element"> {{element.zScore}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="anomalyDescription">
-    <th mat-header-cell *matHeaderCellDef> Warn </th>
-    <td mat-cell *matCellDef="let element">
-      <mat-chip *ngIf="element.anomalyDetected" style="background-color: orangered">{{element.anomalyDescription}}</mat-chip>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="meanWeight">
+      <th mat-header-cell *matHeaderCellDef> Weight </th>
+      <td mat-cell *matCellDef="let element"> {{element.meanWeight}} </td>
+    </ng-container>
 
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
-</table>
+    <ng-container matColumnDef="zScore">
+      <th mat-header-cell *matHeaderCellDef> zScore </th>
+      <td mat-cell *matCellDef="let element"> {{element.zScore}} </td>
+    </ng-container>
 
+    <ng-container matColumnDef="anomalyDescription">
+      <th mat-header-cell *matHeaderCellDef> Warn </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-chip *ngIf="element.anomalyDetected" style="background-color: orangered">{{element.anomalyDescription}}</mat-chip>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+  </table>
+</div>

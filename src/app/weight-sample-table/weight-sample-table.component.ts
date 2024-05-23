@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { WeightSample } from './weight-sampling.service';
 import {
   MatCell,
   MatCellDef,
@@ -11,6 +10,7 @@ import {
 } from '@angular/material/table';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatChip, MatChipOption } from '@angular/material/chips';
+import { WeightSample } from '../weight-sampling/weight-sample.model';
 
 @Component({
   selector: 'app-weight-sample-table',

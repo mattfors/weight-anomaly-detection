@@ -8,7 +8,6 @@ describe('HidScaleService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        HidScaleService,
         {
           provide: HID_SCALE_CONFIG,
           useValue: {

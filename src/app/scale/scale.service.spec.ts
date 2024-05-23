@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 
 import { ScaleService } from './scale.service';
 import { HID_SCALE_CONFIG, HidScaleService } from './hid-scale.service';
-import { HARDWARE_SCALE } from './hardware-scale-interface';
 
 describe('ScaleService', () => {
   let service: ScaleService;
@@ -20,10 +19,6 @@ describe('ScaleService', () => {
             conversionMultiplier: 0.0625,
             precision: 4
           }
-        },
-        {
-          provide: HARDWARE_SCALE,
-          useClass: HidScaleService
         }
       ]
     });

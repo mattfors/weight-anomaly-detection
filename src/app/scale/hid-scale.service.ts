@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { BehaviorSubject, from, fromEvent, map, Observable, of, Subscription, switchMap, tap, throwError } from 'rxjs';
-import { HardwareScaleInterface } from './hardware-scale-interface';
+import { HardwareScaleInterface } from './hardware-scale.interface';
 
 
 export interface HidScaleConfig {
@@ -14,7 +14,9 @@ export interface HidScaleConfig {
 
 export const HID_SCALE_CONFIG = new InjectionToken<HidScaleConfig>('HidScaleConfig');
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HidScaleService implements HardwareScaleInterface{
 
   private hidDevice!: HIDDevice;
@@ -27,7 +29,6 @@ export class HidScaleService implements HardwareScaleInterface{
     this.weightInPounds = this.data.pipe(map(dv => this.getWeightFromDataView(dv)));
     this.precision = config.precision;
   }
-
 
   private getWeightFromDataView(dv: DataView | null): number {
     if (dv) {

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, Observable, Subject, Subscription, tap } from 'rxjs';
-import { HARDWARE_SCALE, HardwareScaleInterface } from './hardware-scale-interface';
+import { HardwareScaleInterface } from './hardware-scale.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +19,9 @@ export class ScaleService {
   readonly changing$: Observable<boolean> = this.detectingChange.asObservable();
   readonly zeroed$: Observable<boolean> = this.zeroedSubject.asObservable();
   readonly zeroedEvent$: Observable<void> = this.zeroedEventSubject.asObservable();
-  readonly precision: number;
+  readonly precision: number = 0;
 
-  constructor(@Inject(HARDWARE_SCALE) private scale: HardwareScaleInterface) {
+  constructor(@Inject('HardwareScaleInterface') private scale: HardwareScaleInterface) {
     this.precision = scale.precision;
   }
 
@@ -52,4 +52,5 @@ export class ScaleService {
     }
     return this.scale.close();
   }
+
 }

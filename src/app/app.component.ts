@@ -10,8 +10,10 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WeightSampleTableComponent } from './weight-sample-table/weight-sample-table.component';
 import { Observable } from 'rxjs';
-import { WeightSample, WeightSamplingService } from './weight-sample-table/weight-sampling.service';
 import { ScaleService } from './scale/scale.service';
+import { WeightSample } from './weight-sampling/weight-sample.model';
+import { WeightSamplingService } from './weight-sampling/weight-sampling.service';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +37,8 @@ import { ScaleService } from './scale/scale.service';
     NgIf,
     ReactiveFormsModule,
     WeightSampleTableComponent,
-    FormsModule
+    FormsModule,
+    MatSlideToggle
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -49,6 +52,7 @@ export class AppComponent {
   count$;
   totalCount$;
   sampleStats$;
+  theoreticalScaleCount$;
 
   constructor(private scaleService: ScaleService, private weightSamplingService: WeightSamplingService) {
     this.weight$ = scaleService.weightInPounds$;
@@ -58,6 +62,7 @@ export class AppComponent {
     this.count$ = weightSamplingService.count$;
     this.totalCount$ = weightSamplingService.totalCount$;
     this.sampleStats$ = weightSamplingService.sampleStats$;
+    this.theoreticalScaleCount$ = weightSamplingService.theoreticalScaleCount$;
   }
 
   open(): void {
@@ -66,6 +71,10 @@ export class AppComponent {
 
   close(): void {
     this.scaleService.close().subscribe(() => console.log("closed"));
+  }
+
+  clear(): void {
+    this.weightSamplingService.clearSamples();
   }
 
   increment() {
@@ -77,5 +86,9 @@ export class AppComponent {
 
   triggerWeight(value: string) {
     this.scaleService.handleValueChange(parseFloat(value))
+  }
+
+  lockCount(event: MatSlideToggleChange) {
+    this.weightSamplingService.lockCount(event.checked)
   }
 }
