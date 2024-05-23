@@ -10,6 +10,10 @@ describe('ScaleService', () => {
     TestBed.configureTestingModule({
       providers: [
         {
+          provide: 'HardwareScaleInterface',
+          useClass: HidScaleService
+        },
+        {
           provide: HID_SCALE_CONFIG,
           useValue: {
             vendorId: 2338,

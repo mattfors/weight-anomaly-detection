@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { HID_SCALE_CONFIG } from './scale/hid-scale.service';
+import { HID_SCALE_CONFIG, HidScaleService } from './scale/hid-scale.service';
 
 
 describe('AppComponent', () => {
@@ -8,6 +8,10 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
+        {
+          provide: 'HardwareScaleInterface',
+          useClass: HidScaleService
+        },
         {
           provide: HID_SCALE_CONFIG,
           useValue: {
