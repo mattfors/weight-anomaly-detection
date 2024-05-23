@@ -30,5 +30,6 @@ jobs:
     - run: npm run build --if-present
     - run: npm test
     - run: npm run deploy
-      with:
-        github_token: ${{ secrets.GH_TOKEN }}
+      env:
+        CI: true
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
