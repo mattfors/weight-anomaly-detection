@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HidScaleService } from './hid-scale.service';
+import { KeyboardWedgeService } from './keyboard-wedge.service';
 
-describe('HidScaleService', () => {
-  let service: HidScaleService;
+describe('KeyboardWedgeService', () => {
+  let service: KeyboardWedgeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HidScaleService);
+    service = TestBed.inject(KeyboardWedgeService);
   });
 
   it('should be created', () => {

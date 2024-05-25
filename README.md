@@ -2,6 +2,8 @@
 
 This project serves as a proof of concept for utilizing weight samples obtained from a USB scale to detect anomalies, such as deviations from expected part quantities.
 
+To try the demo: [mattfors.github.io/weight-anomaly-detection/](https://mattfors.github.io/weight-anomaly-detection/)
+
 ![demo](/images/bobbins.gif)
 
 ## Development server

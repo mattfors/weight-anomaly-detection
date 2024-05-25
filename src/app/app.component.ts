@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -9,11 +9,13 @@ import { MatInput } from '@angular/material/input';
 import { MatList, MatListItem } from '@angular/material/list';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WeightSampleTableComponent } from './weight-sample-table/weight-sample-table.component';
-import { Observable } from 'rxjs';
-import { ScaleService } from './scale/scale.service';
-import { WeightSample } from './weight-sampling/weight-sample.model';
 import { WeightSamplingService } from './weight-sampling/weight-sampling.service';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { HardwareScaleInterface } from './scale/hardware-scale.interface';
+import { AppService } from './app.service';
+import { KeyboardWedgeService } from './scanner/keyboard-wedge.service';
+
+const DUE_TIME = 300;
 
 @Component({
   selector: 'app-root',
@@ -45,32 +47,25 @@ import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-to
 })
 export class AppComponent {
 
-  weight$: Observable<number>;
-  zeroed$: Observable<boolean>;
-  scaleSamples$: Observable<WeightSample[]>;
-  changing$;
-  count$;
-  totalCount$;
-  sampleStats$;
-  theoreticalScaleCount$;
+  view = this.appService.view;
 
-  constructor(private scaleService: ScaleService, private weightSamplingService: WeightSamplingService) {
-    this.weight$ = scaleService.weightInPounds$;
-    this.zeroed$ = scaleService.zeroed$;
-    this.scaleSamples$ = weightSamplingService.samples$;
-    this.changing$ = scaleService.changing$;
-    this.count$ = weightSamplingService.count$;
-    this.totalCount$ = weightSamplingService.totalCount$;
-    this.sampleStats$ = weightSamplingService.sampleStats$;
-    this.theoreticalScaleCount$ = weightSamplingService.theoreticalScaleCount$;
+  constructor(
+    @Inject('HardwareScaleInterface') private scale: HardwareScaleInterface,
+    private weightSamplingService: WeightSamplingService,
+    private keyboardWedgeService: KeyboardWedgeService,
+    private appService: AppService
+  ) {
+    this.appService.startReading().subscribe();
+    this.keyboardWedgeService.read().subscribe(() => this.increment());
   }
 
+
   open(): void {
-    this.scaleService.open().subscribe(() => console.log('connected'));
+    this.scale.open().subscribe();
   }
 
   close(): void {
-    this.scaleService.close().subscribe(() => console.log("closed"));
+    this.scale.close().subscribe();
   }
 
   clear(): void {
@@ -78,17 +73,18 @@ export class AppComponent {
   }
 
   increment() {
-    this.weightSamplingService.increment();
+    this.appService.increment()
   }
 
   protected readonly Object = Object;
   inputValue: any;
 
   triggerWeight(value: string) {
-    this.scaleService.handleValueChange(parseFloat(value))
+    //this.appService.addWeightReading(parseFloat(value));
   }
 
   lockCount(event: MatSlideToggleChange) {
-    this.weightSamplingService.lockCount(event.checked)
+
   }
+
 }

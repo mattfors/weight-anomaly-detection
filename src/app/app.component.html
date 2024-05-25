@@ -8,16 +8,16 @@
       <mat-card-content>
         <mat-list role="list">
           <mat-list-item role="listitem">
-            <span *ngIf="changing$ | async">💬</span>
-            {{weight$|async}} Lbs.
-            <mat-chip *ngIf="zeroed$|async">ZERO</mat-chip>
+            <span *ngIf="view.reading()">💬</span>
+            {{view.weight()}} {{view.units()}}
+            <mat-chip *ngIf="view.zeroed()">ZERO</mat-chip>
           </mat-list-item>
           <mat-list-item role="listitem">
-            Count: {{count$ | async}}
+            Count: {{view.count()}}
             <mat-slide-toggle (change)="lockCount($event)"></mat-slide-toggle>
           </mat-list-item>
-          <mat-list-item role="listitem">Total: {{totalCount$ | async}}</mat-list-item>
-          <mat-list-item role="listitem">Theoretical Scale Count: {{theoreticalScaleCount$ | async}}</mat-list-item>
+          <!--<mat-list-item role="listitem">Total: {{totalCount$ | async}}</mat-list-item>-->
+          <!--<mat-list-item role="listitem">Theoretical Scale Count: {{theoreticalScaleCount$ | async}}</mat-list-item>-->
 
         </mat-list>
 
@@ -34,7 +34,7 @@
   <mat-grid-tile colspan="2" rowspan="2">
     <mat-card style="height: 100%; width: 100%;">
       <mat-card-content>
-        <app-weight-sample-table [samples]="(scaleSamples$ | async) || []"></app-weight-sample-table>
+        <app-weight-sample-table [samples]="view.samples()"></app-weight-sample-table>
       </mat-card-content>
     </mat-card>
 
@@ -46,7 +46,7 @@
         <mat-card-title>Statistics</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-list role="list" *ngIf="(sampleStats$ | async) as data">
+        <mat-list role="list" *ngIf="view.stats() as data">
           <mat-list-item *ngFor="let item of Object.entries(data)" role="listitem">{{item[0]}}: {{item[1]}}</mat-list-item>
         </mat-list>
       </mat-card-content>

@@ -1,76 +1,83 @@
-import { Inject, Injectable, InjectionToken } from '@angular/core';
-import { BehaviorSubject, from, fromEvent, map, Observable, of, Subscription, switchMap, tap, throwError } from 'rxjs';
-import { HardwareScaleInterface } from './hardware-scale.interface';
+import { Injectable } from '@angular/core';
+import {
+  BehaviorSubject,
+  distinctUntilKeyChanged,
+  filter,
+  from,
+  fromEvent,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  Subscription,
+  tap,
+  throwError
+} from 'rxjs';
+import { HardwareScaleInterface, HardwareScaleReportEvent } from './hardware-scale.interface';
+import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 
 
-export interface HidScaleConfig {
-  vendorId: number,
-  byteOffset: number,
-  littleEndian: boolean,
-  decimal: number,
-  conversionMultiplier: number,
-  precision: number
+type HidDataMapper = (arrayBuffer: ArrayBuffer) => HardwareScaleReportEvent;
+
+const DATA_MAPPERS: {[key: string]: HidDataMapper}  = {
+  '2338-32771' : (arrayBuffer: ArrayBuffer) => {
+    const d = new Uint8Array(arrayBuffer);
+    let weight = (d[3] + 256 * d[4])/10;
+    if (d[0] === 5) {
+      weight *= -1;
+    }
+    return {
+      units: d[1] === 2 ? 'g' : 'oz',
+      weight
+    };
+  }
 }
 
-export const HID_SCALE_CONFIG = new InjectionToken<HidScaleConfig>('HidScaleConfig');
+const SCALE_DEVICES: HIDDeviceRequestOptions = {filters: [{usage:32, usagePage: 141}]};
 
 @Injectable({
   providedIn: 'root'
 })
-export class HidScaleService implements HardwareScaleInterface{
+export class HidScaleService implements HardwareScaleInterface {
 
+  private s: BehaviorSubject<HardwareScaleReportEvent | undefined> = new BehaviorSubject<HardwareScaleReportEvent | undefined>(undefined)
   private hidDevice!: HIDDevice;
-  private subscription!: Subscription;
-  private data: BehaviorSubject<DataView | null> = new BehaviorSubject<DataView | null>(null);
-  readonly weightInPounds: Observable<number>;
-  readonly precision: number;
+  private sub!: Subscription;
+  private dataMapper!: HidDataMapper;
 
-  constructor(@Inject(HID_SCALE_CONFIG) public config: HidScaleConfig) {
-    this.weightInPounds = this.data.pipe(map(dv => this.getWeightFromDataView(dv)));
-    this.precision = config.precision;
-  }
-
-  private getWeightFromDataView(dv: DataView | null): number {
-    if (dv) {
-      return (dv.getInt16(this.config.byteOffset, this.config.littleEndian) / this.config.decimal) * this.config.conversionMultiplier;
-    }
-    return 0.0;
-  }
+  reportEvent = () => this.s.asObservable();
 
   open(): Observable<void> {
-    return this.requestDevice(this.config.vendorId).pipe(
-      tap((d: HIDDevice) => this.hidDevice = d),
-      switchMap(d => d.open()),
-      tap(() => this.start())
-    );
-  }
-
-  private requestDevice(vendorId: number): Observable<HIDDevice> {
     if (!('hid' in navigator)) {
       return throwError(() => new Error('Web HID not found'));
     }
-    return from(navigator.hid.requestDevice({ filters: [{ vendorId }] })).pipe(
-      map(d => {
-        if (d.length === 0) {
-          throw new Error('Scale not found');
-        }
-        return d[0];
-      }));
+    return from(navigator.hid.requestDevice(SCALE_DEVICES)).pipe(
+      filter(devices => devices.length > 0),
+      map(devices => devices[0])
+    ).pipe(
+      mergeMap(d => fromPromise(d.open()).pipe(
+        tap(() => this.start(d)))
+      )
+    );
   }
 
-  private start() {
-    if (!this.hidDevice) return;
-    this.subscription = fromEvent<HIDInputReportEvent>(this.hidDevice, 'inputreport')
-      .subscribe((event: HIDInputReportEvent) => this.data.next(event.data));
+  private start(d: HIDDevice): void {
+    this.hidDevice = d;
+    this.dataMapper = DATA_MAPPERS[`${d.vendorId}-${d.productId}`]
+    if (!this.dataMapper) {
+      throw new Error(`No data mapper found for: ${d.productName}`);
+    }
+    this.sub = fromEvent<HIDInputReportEvent>(d, 'inputreport').pipe(
+      map(e => this.dataMapper(e.data.buffer)),
+      distinctUntilKeyChanged('weight')
+    ).subscribe(e => this.s.next(e));
   }
 
   close(): Observable<void> {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+    if (this.sub) {
+      this.sub.unsubscribe();
     }
-    if (this.hidDevice) {
-      return from(this.hidDevice.close());
-    }
-    return of();
+    return this.hidDevice ? from(this.hidDevice.close()) : of();
   }
+
 }
