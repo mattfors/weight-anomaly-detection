@@ -29,7 +29,5 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
-    - name: Setup Git user
-      uses: fregante/setup-git-user@v2.0.1
     - name: Deploy to gh pages
       run: npm run deploy
