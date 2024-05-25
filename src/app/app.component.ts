@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -11,9 +11,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WeightSampleTableComponent } from './weight-sample-table/weight-sample-table.component';
 import { WeightSamplingService } from './weight-sampling/weight-sampling.service';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { HardwareScaleInterface } from './scale/hardware-scale.interface';
 import { AppService } from './app.service';
 import { KeyboardWedgeService } from './scanner/keyboard-wedge.service';
+import { ScaleDisplayComponent } from './scale-display/scale-display.component';
+import { NgScalesConnectionButtonDirective } from 'ng-scales';
 
 const DUE_TIME = 300;
 
@@ -40,7 +41,9 @@ const DUE_TIME = 300;
     ReactiveFormsModule,
     WeightSampleTableComponent,
     FormsModule,
-    MatSlideToggle
+    MatSlideToggle,
+    ScaleDisplayComponent,
+    NgScalesConnectionButtonDirective
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -50,22 +53,12 @@ export class AppComponent {
   view = this.appService.view;
 
   constructor(
-    @Inject('HardwareScaleInterface') private scale: HardwareScaleInterface,
     private weightSamplingService: WeightSamplingService,
     private keyboardWedgeService: KeyboardWedgeService,
     private appService: AppService
   ) {
     this.appService.startReading().subscribe();
     this.keyboardWedgeService.read().subscribe(() => this.increment());
-  }
-
-
-  open(): void {
-    this.scale.open().subscribe();
-  }
-
-  close(): void {
-    this.scale.close().subscribe();
   }
 
   clear(): void {

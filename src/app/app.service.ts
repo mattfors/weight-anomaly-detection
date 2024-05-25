@@ -1,8 +1,9 @@
 import { Inject, Injectable, signal, Signal } from '@angular/core';
 import { WeightSamplingService } from './weight-sampling/weight-sampling.service';
 import { debounceTime, Observable, tap } from 'rxjs';
-import { HardwareScaleInterface, HardwareScaleReportEvent } from './scale/hardware-scale.interface';
 import { WeightSample, WeightStats } from './weight-sampling/weight-sample.model';
+import { NgScalesService } from 'ng-scales';
+import { HardwareScaleReportEvent } from 'ng-scales/lib/hardware/hardware-scale.interface';
 
 const DUE_TIME = 300;
 
@@ -42,23 +43,19 @@ export class AppService {
     stats: this.weightSamplingService.stats
   } as const;
 
-  constructor(
-    @Inject('HardwareScaleInterface') private scale: HardwareScaleInterface,
+  constructor(private scale: NgScalesService,
     private weightSamplingService: WeightSamplingService) {
-
   }
 
-  startReading(): Observable<HardwareScaleReportEvent | undefined> {
+  startReading(): Observable<HardwareScaleReportEvent> {
     return this.scale.reportEvent().pipe(
       tap(() => this.state.reading.set(true)),
       debounceTime(DUE_TIME),
-      tap(e => {
+      tap((e: HardwareScaleReportEvent) => {
         this.state.reading.set(false)
-        if (e) {
-          this.addWeightReading(e.weight);
-          this.state.weight.set(e.weight);
-          this.state.units.set(e.units || '');
-        }
+        this.addWeightReading(e.weight);
+        this.state.weight.set(e.weight);
+        this.state.units.set(e.units || '');
       })
     )
   }
